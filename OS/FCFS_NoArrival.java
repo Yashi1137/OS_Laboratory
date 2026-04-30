@@ -7,29 +7,31 @@ public class FCFS_NoArrival {
         System.out.print("Enter number of processes: ");
         int n = sc.nextInt();
 
-        int[] bt = new int[n];
-        int[] ct = new int[n];
-        int[] tat = new int[n];
-        int[] wt = new int[n];
+        int[] bt = new int[n];  // Burst Time
+        int[] wt = new int[n];  // Waiting Time
+        int[] tat = new int[n]; // Turnaround Time
 
         System.out.println("Enter Burst Times:");
         for (int i = 0; i < n; i++) {
             bt[i] = sc.nextInt();
         }
 
-        ct[0] = bt[0];
+        wt[0] = 0;
+
+        // Calculate Waiting Time
         for (int i = 1; i < n; i++) {
-            ct[i] = ct[i - 1] + bt[i];
+            wt[i] = wt[i - 1] + bt[i - 1];
         }
 
+        // Calculate Turnaround Time
         for (int i = 0; i < n; i++) {
-            tat[i] = ct[i];      // AT = 0
-            wt[i] = tat[i] - bt[i];
+            tat[i] = wt[i] + bt[i];
         }
 
-        System.out.println("\nP\tBT\tCT\tTAT\tWT");
+        // Output
+        System.out.println("Process\tBT\tWT\tTAT");
         for (int i = 0; i < n; i++) {
-            System.out.println("P" + i + "\t" + bt[i] + "\t" + ct[i] + "\t" + tat[i] + "\t" + wt[i]);
+            System.out.println("P" + (i+1) + "\t" + bt[i] + "\t" + wt[i] + "\t" + tat[i]);
         }
 
         sc.close();
