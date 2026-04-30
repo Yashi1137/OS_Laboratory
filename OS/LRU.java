@@ -1,27 +1,39 @@
 import java.util.*;
 
 public class LRU {
-    public static void main(String[] args)
-    {
-        int[] pages= {1,2,3,4,1,2,5,1,2,3,4,5};
-        int capacity=3;
-        int faults=0;
-        List<Integer> frames= new ArrayList<>();
-        for(int page:pages)
-        {
-            if(!frames.contains(page))
-            {
-                faults++;
-                if(capacity==frames.size())
-                {
-                    frames.remove(0);
-                }
-            }else{
-                frames.remove(page);
-            }
-            frames.add(page);
-            System.out.println("Frames: "+ frames);
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of pages: ");
+        int n = sc.nextInt();
+
+        int[] pages = new int[n];
+        System.out.println("Enter page reference string:");
+        for (int i = 0; i < n; i++) {
+            pages[i] = sc.nextInt();
         }
-        System.out.println("Total page faults: "+faults);
+
+        System.out.print("Enter number of frames: ");
+        int capacity = sc.nextInt();
+
+        List<Integer> list = new ArrayList<>();
+        int pageFaults = 0;
+
+        for (int page : pages) {
+            if (!list.contains(page)) {
+                pageFaults++;
+
+                if (list.size() == capacity) {
+                    list.remove(0);
+                }
+            } else {
+                list.remove((Integer) page);
+            }
+
+            list.add(page);
+            System.out.println("Frames: " + list);
+        }
+
+        System.out.println("Total Page Faults (LRU): " + pageFaults);
     }
 }
