@@ -1,6 +1,6 @@
 import java.util.*;
 
-class SJF_P_NoCT {
+class SJF_Preemptive {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
