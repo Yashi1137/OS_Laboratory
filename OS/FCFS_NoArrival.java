@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class FCFS_NoArrival {
+public class FCFS_NoArrival_CT {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -8,6 +8,7 @@ public class FCFS_NoArrival {
         int n = sc.nextInt();
 
         int[] bt = new int[n];  // Burst Time
+        int[] ct = new int[n];  // Completion Time
         int[] wt = new int[n];  // Waiting Time
         int[] tat = new int[n]; // Turnaround Time
 
@@ -16,22 +17,22 @@ public class FCFS_NoArrival {
             bt[i] = sc.nextInt();
         }
 
-        wt[0] = 0;
-
-        // Calculate Waiting Time
+        // Calculate Completion Time
+        ct[0] = bt[0];
         for (int i = 1; i < n; i++) {
-            wt[i] = wt[i - 1] + bt[i - 1];
+            ct[i] = ct[i - 1] + bt[i];
         }
 
-        // Calculate Turnaround Time
+        // Calculate TAT and WT
         for (int i = 0; i < n; i++) {
-            tat[i] = wt[i] + bt[i];
+            tat[i] = ct[i];          // since AT = 0
+            wt[i] = tat[i] - bt[i];
         }
 
         // Output
-        System.out.println("Process\tBT\tWT\tTAT");
+        System.out.println("Process\tBT\tCT\tWT\tTAT");
         for (int i = 0; i < n; i++) {
-            System.out.println("P" + (i+1) + "\t" + bt[i] + "\t" + wt[i] + "\t" + tat[i]);
+            System.out.println("P" + (i+1) + "\t" + bt[i] + "\t" + ct[i] + "\t" + wt[i] + "\t" + tat[i]);
         }
 
         sc.close();
