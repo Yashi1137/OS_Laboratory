@@ -1,66 +1,86 @@
 import java.util.*;
 
-class RRProcess {
+class Process {
     int id, at, bt, rt, ct, tat, wt;
 }
 
-public class RoundRobin {
+public class RR_With_Arrival {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Enter number of processes: ");
         int n = sc.nextInt();
 
+        Process[] p = new Process[n];
+
+        for (int i = 0; i < n; i++) {
+            p[i] = new Process();
+            p[i].id = i + 1;
+
+            System.out.print("Arrival Time of P" + p[i].id + ": ");
+            p[i].at = sc.nextInt();
+
+            System.out.print("Burst Time of P" + p[i].id + ": ");
+            p[i].bt = sc.nextInt();
+
+            p[i].rt = p[i].bt; // remaining time
+        }
+
         System.out.print("Enter Time Quantum: ");
         int tq = sc.nextInt();
 
-        RRProcess[] p = new RRProcess[n];
-
-        for (int i = 0; i < n; i++) {
-            p[i] = new RRProcess();
-            p[i].id = i;
-            System.out.print("AT BT for P" + i + ": ");
-            p[i].at = sc.nextInt();
-            p[i].bt = sc.nextInt();
-            p[i].rt = p[i].bt;
-        }
-
-        Queue<Integer> q = new LinkedList<>();
         int time = 0, completed = 0;
-
+        Queue<Process> q = new LinkedList<>();
         boolean[] inQueue = new boolean[n];
 
-        q.add(0);
-        inQueue[0] = true;
-
         while (completed < n) {
-            int i = q.poll();
 
-            int exec = Math.min(tq, p[i].rt);
-            p[i].rt -= exec;
-            time += exec;
-
-            for (int j = 0; j < n; j++) {
-                if (!inQueue[j] && p[j].at <= time) {
-                    q.add(j);
-                    inQueue[j] = true;
+            // add processes to queue
+            for (int i = 0; i < n; i++) {
+                if (p[i].at <= time && !inQueue[i] && p[i].rt > 0) {
+                    q.add(p[i]);
+                    inQueue[i] = true;
                 }
             }
 
-            if (p[i].rt > 0) {
-                q.add(i);
+            if (q.isEmpty()) {
+                time++;
+                continue;
+            }
+
+            Process curr = q.poll();
+
+            int execTime = Math.min(tq, curr.rt);
+            curr.rt -= execTime;
+            time += execTime;
+
+            // check new arrivals during execution
+            for (int i = 0; i < n; i++) {
+                if (p[i].at <= time && !inQueue[i] && p[i].rt > 0) {
+                    q.add(p[i]);
+                    inQueue[i] = true;
+                }
+            }
+
+            if (curr.rt > 0) {
+                q.add(curr);
             } else {
-                p[i].ct = time;
-                p[i].tat = p[i].ct - p[i].at;
-                p[i].wt = p[i].tat - p[i].bt;
+                curr.ct = time;
                 completed++;
             }
         }
 
+        // calculate TAT and WT
+        for (Process pr : p) {
+            pr.tat = pr.ct - pr.at;
+            pr.wt = pr.tat - pr.bt;
+        }
+
+        // output
         System.out.println("\nP\tAT\tBT\tCT\tTAT\tWT");
-        for (RRProcess x : p) {
-            System.out.println(x.id + "\t" + x.at + "\t" + x.bt +
-                    "\t" + x.ct + "\t" + x.tat + "\t" + x.wt);
+        for (Process pr : p) {
+            System.out.println("P" + pr.id + "\t" + pr.at + "\t" + pr.bt + "\t" +
+                    pr.ct + "\t" + pr.tat + "\t" + pr.wt);
         }
 
         sc.close();
